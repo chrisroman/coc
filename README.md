@@ -1,5 +1,5 @@
 # Calculus of Constructions
-Implementation of the [Calculus of Construction](https://www.sciencedirect.com/science/article/pii/0890540188900053)
+Implementation of the [Calculus of Constructions](https://www.sciencedirect.com/science/article/pii/0890540188900053)
 by Coquand and Huet.
 
 # Prerequisites

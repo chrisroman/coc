@@ -1,14 +1,20 @@
-.PHONY: build exec clean
+TESTS := tests/*.coc
 
 default:
-	dune build
+	dune build main.exe
 
+.PHONY: build
 build:
-	dune build
+	dune build main.exe
 
-exec:
-	dune build
-	dune exec ./main.exe
+.PHONY: test
+test:
+	turnt $(TESTS)
 
+.PHONY: save
+save:
+	turnt --save $(TESTS)
+
+.PHONY: clean
 clean:
 	dune clean

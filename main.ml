@@ -21,9 +21,9 @@ let parse_with_error lexbuf =
 
 let rec parse_and_print lexbuf =
   match parse_with_error lexbuf with
-  | Some _value ->
-    (* printf "%s\n" (value |> sexp_of_term_t |> Sexp.to_string_hum); *)
-    printf "%s\n" "Found a value!";
+  | Some _term ->
+    (* printf "%s\n" (Ast.string_of_term_t term); *)
+    (* printf "%s\n" "Found a value!"; *)
     parse_and_print lexbuf
   | None -> ()
 

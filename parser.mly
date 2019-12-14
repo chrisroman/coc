@@ -24,6 +24,7 @@
 %start <Ast.term_t option> start
 %%
 
+(* TODO: Add -> syntax sugar? *)
 start:
   | EOF
   { None }

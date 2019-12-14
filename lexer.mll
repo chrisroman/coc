@@ -21,6 +21,7 @@ rule read =
   | white     { read lexbuf }
   | newline   { next_line lexbuf; read lexbuf }
   | "\\"      { LAMBDA }
+  | "λ"      { LAMBDA }
   | ':'       { COLON }
   | '('       { LPAREN }
   | ')'       { RPAREN }

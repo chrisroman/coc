@@ -6,4 +6,5 @@ by Coquand and Huet.
 - Ocaml 4.08.1
 
 ## Running programs
-Run `make` and then `dune exec ./main.exe test.coc`
+To simply build the program, run `make`, which will create a file
+`_build/default/main.exe`. To test programs, run `make test`.

@@ -26,7 +26,7 @@ let rec string_of_term_t t =
 let rec is_context (term : term_t) : bool = 
   match term with
   | Star -> true
-  | Product (_, _, p) -> is_context p
+  | Product (_, _, n) -> is_context n
   | _ -> false
 
 let assert_context (term : term_t) =
@@ -44,8 +44,8 @@ let rec context_split_bf (term : term_t) : term_t * (id * term_t) =
   match term with
   | Product (x, m, Star) ->
     Star, (x, m)
-  | Product (x, m, p) ->
-    let (hd, tl) = context_split_bf p in
+  | Product (x, m, n) ->
+    let (hd, tl) = context_split_bf n in
     Product (x, m, hd), tl
   | _ -> failwith (Printf.sprintf
                      "Tried to call [context_split_bf] on an empty or invalid context term %s\n"
@@ -60,20 +60,29 @@ let context_split_ht (term : term_t) : (id * term_t) * term_t =
   match term with
   | Product (x, m, Star) ->
     (x, m), Star
-  | Product (x, m, p) ->
-    (x, m), p
+  | Product (x, m, n) ->
+    (x, m), n
   | _ -> failwith (Printf.sprintf
                      "Tried to call [context_split_ht] on an empty or invalid context term %s\n"
                      (string_of_term_t term)
                   )
 
-let rec context_append (context : term_t) ((x, m) : id * term_t) : term_t =
+let rec context_append (context : term_t) (x, m : id * term_t) : term_t =
   assert_context context;
   match context with
   | Star -> Product (x, m, Star)
-  | Product (x', m', p) -> Product (x', m', context_append p (x, m))
+  | Product (x', m', n) -> Product (x', m', context_append n (x, m))
   | _ -> failwith (Printf.sprintf
                      "Tried to call [context_append] on an invalid context term %s\n"
                      (string_of_term_t context)
                   )
 
+let rec context_contains (context : term_t) (x, p : id * term_t) : bool =
+  assert_context context;
+  match context with
+  | Star -> false
+  | Product (x', m', n) -> (x = x' && p = m') || (context_contains n (x, p))
+  | _ -> failwith (Printf.sprintf
+                     "Tried to call [context_contains] on an invalid context term %s\n"
+                     (string_of_term_t context)
+                  )

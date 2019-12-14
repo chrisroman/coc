@@ -46,8 +46,11 @@ let () =
         let%map_open
           filename = anon ("filename" %: string)
         and typecheck = flag "--typecheck" no_arg ~doc:" typecheck the program"
+        and debug = flag "--debug" no_arg ~doc:" typecheck the program"
         in
-        fun () -> loop filename typecheck ()
+        fun () ->
+          config_debug := debug;
+          loop filename typecheck ()
       )
   in
   Command.run command

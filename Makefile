@@ -10,7 +10,11 @@ build:
 
 .PHONY: test
 test:
-	turnt $(TESTS)
+	turnt -v $(TESTS)
+
+.PHONY: debug
+debug:
+	turnt -v $(TESTS) -a "--debug"
 
 .PHONY: save
 save:

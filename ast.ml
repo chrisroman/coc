@@ -35,17 +35,35 @@ let assert_context (term : term_t) =
             "Expected term %s to be a context\n" (string_of_term_t term))
 
 (* If term = [x1:M1]...[xn:Mn]* then we split off just the last element, i.e.
- * components, i.e. return [x1:M1]...[xn-1:Mn-1]* and (xn, Mn)*
- * If term = [x:M]* then just return Star and [x:M]* *)
-let rec context_split (term : term_t) : term_t * (id * term_t) =
+ * components, i.e. return [x1:M1]...[xn-1:Mn-1]* and (xn, Mn)
+ * If term = [x:M]* then just return * and (x, M)
+ * For consistent naming, we'll say we return a tuple of the "body" and "foot"
+ * of the list *)
+let rec context_split_bf (term : term_t) : term_t * (id * term_t) =
   assert_context term;
   match term with
   | Product (x, m, Star) ->
     Star, (x, m)
-  | Product (x, m, (Product (_, _, _) as p)) ->
-    let (hd, tl) = context_split p in
+  | Product (x, m, p) ->
+    let (hd, tl) = context_split_bf p in
     Product (x, m, hd), tl
   | _ -> failwith (Printf.sprintf
-                     "Tried to call [context_tail] on an empty or invalid context term %s\n"
+                     "Tried to call [context_split_bf] on an empty or invalid context term %s\n"
                      (string_of_term_t term)
                   )
+
+(* If term = [x1:M1]...[xn:Mn]* then return the head and tail
+ * i.e. return (x1, m1) and [x2:M2]...[xn:Mn]*
+ * If term = [x:M]* then just return (x, M) and * *)
+let context_split_ht (term : term_t) : (id * term_t) * term_t =
+  assert_context term;
+  match term with
+  | Product (x, m, Star) ->
+    (x, m), Star
+  | Product (x, m, p) ->
+    (x, m), p
+  | _ -> failwith (Printf.sprintf
+                     "Tried to call [context_split_ht] on an empty or invalid context term %s\n"
+                     (string_of_term_t term)
+                  )
+

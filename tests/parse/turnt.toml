@@ -1,1 +1,1 @@
-command = "../../_build/default/main.exe {filename}"
+command = "../../_build/default/main.exe {args} {filename}"

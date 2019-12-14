@@ -1,1 +1,1 @@
-command = "../../_build/default/main.exe --typecheck {filename}"
+command = "../../_build/default/main.exe --typecheck {args} {filename}"

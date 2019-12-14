@@ -1,4 +1,5 @@
-TESTS := tests/*.coc
+TESTS := tests/parse/*.coc \
+	tests/typecheck/*.coc
 
 default:
 	dune build main.exe

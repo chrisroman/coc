@@ -67,3 +67,13 @@ let context_split_ht (term : term_t) : (id * term_t) * term_t =
                      (string_of_term_t term)
                   )
 
+let rec context_append (context : term_t) ((x, m) : id * term_t) : term_t =
+  assert_context context;
+  match context with
+  | Star -> Product (x, m, Star)
+  | Product (x', m', p) -> Product (x', m', context_append p (x, m))
+  | _ -> failwith (Printf.sprintf
+                     "Tried to call [context_append] on an invalid context term %s\n"
+                     (string_of_term_t context)
+                  )
+

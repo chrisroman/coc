@@ -42,7 +42,8 @@ let rec typecheck_context ?(depth = 1) (gamma : term_t) (delta : term_t) : unit 
             (try
                (* Product Formation (1) *)
                dbg_print ~depth "Applying Product Formation (1)\n";
-               dbg_failwith ~depth "typecheck_context product formation (1) unimplemented"
+               let (x, m), delta_tl = Ast.context_split_ht delta in
+               typecheck_context ~depth:(depth+1) (context_append gamma (x, m)) delta_tl
              with _ ->
                (try
                   (* Product Formation (2) *)

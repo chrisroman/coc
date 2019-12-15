@@ -10,7 +10,9 @@ let dbg_print ?(depth = 0) msg =
   if !config_debug then print_string ((repeat_str "\t" depth) ^ msg) else ()
 
 let dbg_failwith ?(depth = 0) msg =
-  failwith ((repeat_str "\t" depth) ^ msg)
+  dbg_print msg ~depth;
+  let print_msg = (repeat_str "\t" depth) ^ msg in
+  failwith print_msg
 
 let m_assert ?(msg = "") ?(depth = 0) cond =
-   assert (if not cond then print_endline ((repeat_str "\t" depth) ^ msg); cond)
+  assert (if not cond then dbg_print msg ~depth; cond)

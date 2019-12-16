@@ -20,6 +20,10 @@ debug:
 save:
 	turnt --save $(TESTS)
 
+.PHONY: repl
+repl:
+	_build/default/main.exe --repl
+
 .PHONY: clean
 clean:
 	dune clean

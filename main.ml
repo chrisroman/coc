@@ -45,19 +45,39 @@ let loop filename typecheck () =
   parse_and_print lexbuf typecheck;
   In_channel.close inx
 
+let rec run_repl () =
+  print_string "> ";
+  match Out_channel.(flush stdout); In_channel.(input_line_exn stdin) with
+  | exception End_of_file -> ()
+  | cmd -> 
+    (try 
+       let lexbuf = Lexing.from_string cmd in
+       parse_and_print lexbuf true
+     with Failure msg ->
+       print_endline msg
+    );
+    Out_channel.newline stdout;
+    run_repl ()
+
 let () =
   let command =
     Command.basic
       ~summary:"Run a Calculus of Constructions program"
       Command.Let_syntax.(
         let%map_open
-          filename = anon ("filename" %: string)
+          files = anon (sequence ("filename" %: string))
         and typecheck = flag "--typecheck" no_arg ~doc:" typecheck the program"
         and debug = flag "--debug" no_arg ~doc:" typecheck the program"
+        and repl = flag "--repl" no_arg ~doc:" run in REPL mode"
         in
         fun () ->
           config_debug := debug;
-          loop filename typecheck ()
+          if repl then (
+            print_endline "Welcome to the Calculus of Constructions! Type in your terms below";
+            run_repl ()
+          ) else (
+            loop (List.hd_exn files) typecheck ()
+          )
       )
   in
   Command.run command

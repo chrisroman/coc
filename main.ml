@@ -25,8 +25,15 @@ let rec parse_and_print lexbuf typecheck =
   match parse_with_error lexbuf with
   | Some term ->
     printf "%s\n" (Ast.string_of_term_t term);
-    if typecheck then
-      Typecheck.typecheck_context term Star;
+    if typecheck then (
+      if is_context term then (
+        Typecheck.typecheck_context term Star;
+        printf "Type: %s\n" (string_of_term_t Star)
+      ) else (
+        let t = Typecheck.typecheck_term Star term in
+        printf "Type: %s\n" (string_of_term_t t)
+      )
+    );
     (* printf "%s\n" "Found a value!"; *)
     parse_and_print lexbuf typecheck
   | None -> ()

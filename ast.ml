@@ -86,3 +86,37 @@ let rec context_contains (context : term_t) (x, p : id * term_t) : bool =
                      "Tried to call [context_contains] on an invalid context term %s\n"
                      (string_of_term_t context)
                   )
+
+(* Allows shadowing *)
+let rec context_get_impl (context : term_t) (x : id) (res : term_t option): term_t =
+  match context with
+  | Star -> 
+    begin match res with
+      | None -> failwith (Printf.sprintf "Couldn't find %s in %s" x (string_of_term_t context))
+      | Some r -> r
+    end
+  | Product (x', m, n) ->
+    let res = if x = x' then Some m else res in
+    context_get_impl n x res
+  | _ -> failwith (Printf.sprintf
+                     "Tried to call [context_get_impl] on an invalid context term %s\n"
+                     (string_of_term_t context)
+                  )
+
+let context_get (context : term_t) (x : id) : term_t =
+  assert_context context;
+  context_get_impl context x None
+
+let rec subst_term (term : term_t) (n : term_t) (x : id) : term_t =
+  match term with
+  | Id x' ->
+    if x = x' then n else term
+  | Lambda (x', m', n') ->
+    Lambda (x', subst_term m' n x, subst_term n' n x)
+  | App (m', n') -> 
+    App (subst_term m' n x, subst_term n' n x)
+  | Product (x', m', n') ->
+    Product (x', subst_term m' n x, subst_term n' n x)
+  | Star ->
+    Star
+

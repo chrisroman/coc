@@ -30,11 +30,13 @@ let rec parse_and_print lexbuf typecheck =
   | None -> ()
 
 let loop filename typecheck () =
-  let inx = In_channel.create filename in
-  let lexbuf = Lexing.from_channel inx in
-  lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
-  parse_and_print lexbuf typecheck;
-  In_channel.close inx
+  try
+    let inx = In_channel.create filename in
+    let lexbuf = Lexing.from_channel inx in
+    lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
+    parse_and_print lexbuf typecheck;
+    In_channel.close inx
+  with e -> printf "%s\n" (Exn.to_string e)
 
 let rec run_repl () =
   print_string "> ";

@@ -31,6 +31,7 @@ rule read =
   | "let"     { LET }
   | '='       { EQUALS }
   | "in"      { IN }
+  | "untyped" { UNTYPED }
   | eof       { EOF }
   | id as id  { ID id }
   | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }

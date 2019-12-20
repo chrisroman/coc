@@ -85,6 +85,9 @@ let typecheck_term term =
 let rec typecheck_program p =
   match p with
   | Term term -> typecheck_term term
-  | Let (x, t, p) ->
+  | Let (Untyped, x, t, p) ->
+    print_endline "Untyped";
+    typecheck_program (subst_binding x t p)
+  | Let (Typed, x, t, p) ->
     typecheck_term t;
     typecheck_program (subst_binding x t p)

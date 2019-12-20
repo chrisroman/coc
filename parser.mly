@@ -22,6 +22,7 @@
 %token LET
 %token EQUALS
 %token IN
+%token UNTYPED
 %token EOF
 
 %start <Ast.program option> start
@@ -35,8 +36,10 @@ start:
   { Some p }
 
 program:
+  | LET; UNTYPED; x = ID; EQUALS; t1 = term; IN; p = program
+    { Let (Untyped, x, t1, p) }
   | LET; x = ID; EQUALS; t1 = term; IN; p = program
-    { Let (x, t1, p) }
+    { Let (Typed, x, t1, p) }
   | term = term
   { Term term }
 ;

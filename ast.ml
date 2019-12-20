@@ -2,6 +2,9 @@ open Core
 open Common
 
 type id = string [@@deriving sexp]
+type typed =
+  | Untyped
+  | Typed
 type term_t =
   | Id of id
   | Lambda of (id * term_t * term_t)
@@ -10,7 +13,7 @@ type term_t =
   | Star
   [@@deriving sexp]
 type program =
-  | Let of (id * term_t * program)
+  | Let of (typed * id * term_t * program)
   | Term of term_t
 
 let rec string_of_term_t t =
@@ -18,19 +21,24 @@ let rec string_of_term_t t =
   | Id id ->
     id
   | Lambda (x, m, n) ->
-    Printf.sprintf "(λ%s: %s)%s" x (string_of_term_t m) (string_of_term_t n)
+    Printf.sprintf "(λ%s: %s) %s" x (string_of_term_t m) (string_of_term_t n)
   | App (m, n) -> 
     Printf.sprintf "(%s %s)" (string_of_term_t m) (string_of_term_t n)
   | Product (x, m, n) ->
-    Printf.sprintf "[%s: %s]%s" x (string_of_term_t m) (string_of_term_t n)
+    Printf.sprintf "[%s: %s] %s" x (string_of_term_t m) (string_of_term_t n)
   | Star ->
     "*"
 
+let string_of_typed tc =
+  match tc with
+  | Untyped -> " Untyped"
+  | Typed -> ""
+
 let rec string_of_program p =
   match p with
-  | Let (x, t, p') ->
-    Printf.sprintf "let %s = %s in \n%s"
-      x (string_of_term_t t) (string_of_program p')
+  | Let (tc, x, t, p') ->
+    Printf.sprintf "let%s %s = %s in \n%s"
+      (string_of_typed tc) x (string_of_term_t t) (string_of_program p')
   | Term t -> string_of_term_t t
 
 let rec is_context (term : term_t) : bool = 
@@ -142,4 +150,4 @@ let rec alpha_equiv (t1 : term_t) (t2 : term_t) : bool =
 let rec subst_binding (x : id) (t : term_t) (p : program) : program =
   match p with
   | Term t' -> Term (subst_term t' t x)
-  | Let (x', t', p') -> Let (x', (subst_term t' t x), (subst_binding x t p'))
+  | Let (tc, x', t', p') -> Let (tc, x', (subst_term t' t x), (subst_binding x t p'))

@@ -19,17 +19,26 @@
 %token LBRACK
 %token RBRACK
 %token STAR
+%token LET
+%token EQUALS
+%token IN
 %token EOF
 
-%start <Ast.term_t option> start
+%start <Ast.program option> start
 %%
 
 (* TODO: Add -> syntax sugar? *)
 start:
   | EOF
   { None }
+  | p = program
+  { Some p }
+
+program:
+  | LET; x = ID; EQUALS; t1 = term; IN; p = program
+    { Let (x, t1, p) }
   | term = term
-  { Some term }
+  { Term term }
 ;
 
 term:

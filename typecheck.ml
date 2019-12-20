@@ -24,7 +24,7 @@ let rec typecheck_context ?(depth = 1) (gamma_arg : term_t) (delta_arg : term_t)
       (* Valid Contexts (3) *)
       dbg_print ~depth "Applying Valid Contexts (3)\n";
       let t = typecheck_term ~depth:(depth+1) gamma delta_or_P in
-      m_assert (t = Star) ~depth ~msg:(Printf.sprintf "Expected to typecheck to Star but found %s\n" (string_of_term_t t))
+      m_assert (t = Star) ~depth ~msg:(Printf.sprintf "(1) Expected to typecheck to * but found %s\n" (string_of_term_t t))
     )
   | gamma, Product (x, p, delta) ->
     (* Product Formation (1) *)
@@ -45,7 +45,7 @@ and typecheck_term ?(depth = 1) (gamma_arg : term_t) (m_arg : term_t) : term_t =
     (* Product Formation (2) *)
     dbg_print ~depth "Applying Product Formation (2)\n";
     let res = typecheck_term ~depth:(depth+1) (context_append gamma (x, p)) n in
-    m_assert (res = Star) ~depth ~msg:(Printf.sprintf "Expected to typecheck to Star but found %s\n" (string_of_term_t res));
+    m_assert (res = Star) ~depth ~msg:(Printf.sprintf "(2) Expected to typecheck to * but found %s\n" (string_of_term_t res));
     Star
   | gamma, Id x ->
     dbg_print ~depth "Applying Variables\n";
@@ -63,12 +63,28 @@ and typecheck_term ?(depth = 1) (gamma_arg : term_t) (m_arg : term_t) : term_t =
     begin match typecheck_term gamma m ~depth:(depth+1) with
       | Product (x, p, q) ->
         let p' = typecheck_term gamma n in
-        m_assert (p = p') ~depth ~msg:(Printf.sprintf "Expected %s = %s\n" (string_of_term_t p) (string_of_term_t p'));
+        m_assert (alpha_equiv p p') ~depth ~msg:(Printf.sprintf "Expected %s = %s\n" (string_of_term_t p) (string_of_term_t p'));
         subst_term q n x
-      | _ ->
-        dbg_failwith ~depth (Printf.sprintf "could not typecheck_term %s |- %s\n" (string_of_term_t gamma_arg) (string_of_term_t m_arg))
+      | typeof_m ->
+        dbg_failwith ~depth (Printf.sprintf "(1) could not typecheck_term %s |- %s ... Found %s |- %s : %s where type is not a product\n"
+                               (string_of_term_t gamma_arg) (string_of_term_t m_arg) (string_of_term_t gamma) (string_of_term_t m) (string_of_term_t typeof_m))
     end
   | _ ->
-    dbg_failwith ~depth (Printf.sprintf "could not typecheck_term %s |- %s\n" (string_of_term_t gamma_arg) (string_of_term_t m_arg))
+    dbg_failwith ~depth (Printf.sprintf "(2) could not typecheck_term %s |- %s\n" (string_of_term_t gamma_arg) (string_of_term_t m_arg))
 
 
+let typecheck_term term =
+  if is_context term then (
+    typecheck_context term Star;
+    printf "Type: %s\n" (string_of_term_t Star)
+  ) else (
+    let t = typecheck_term Star term in
+    printf "Type: %s\n" (string_of_term_t t)
+  )
+
+let rec typecheck_program p =
+  match p with
+  | Term term -> typecheck_term term
+  | Let (x, t, p) ->
+    typecheck_term t;
+    typecheck_program (subst_binding x t p)

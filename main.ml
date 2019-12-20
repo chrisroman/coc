@@ -1,4 +1,3 @@
-[@@@part "0"] ;;
 open Core
 open Lexer
 open Lexing
@@ -19,20 +18,12 @@ let parse_with_error lexbuf =
     fprintf stderr "%a: syntax error\n" print_position lexbuf;
     exit (-1)
 
-[@@@part "1"] ;;
-
 let rec parse_and_print lexbuf typecheck =
   match parse_with_error lexbuf with
-  | Some term ->
-    printf "%s\n" (Ast.string_of_term_t term);
+  | Some prog ->
+    printf "%s\n" (Ast.string_of_program prog);
     if typecheck then (
-      if is_context term then (
-        Typecheck.typecheck_context term Star;
-        printf "Type: %s\n" (string_of_term_t Star)
-      ) else (
-        let t = Typecheck.typecheck_term Star term in
-        printf "Type: %s\n" (string_of_term_t t)
-      )
+      Typecheck.typecheck_program prog
     );
     (* printf "%s\n" "Found a value!"; *)
     parse_and_print lexbuf typecheck
@@ -53,8 +44,7 @@ let rec run_repl () =
     (try 
        let lexbuf = Lexing.from_string cmd in
        parse_and_print lexbuf true
-     with Failure msg ->
-       print_endline msg
+     with e -> print_endline (Exn.to_string e)
     );
     Out_channel.newline stdout;
     run_repl ()

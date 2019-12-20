@@ -9,6 +9,9 @@ type term_t =
   | Product of (id * term_t * term_t)
   | Star
   [@@deriving sexp]
+type program =
+  | Let of (id * term_t * program)
+  | Term of term_t
 
 let rec string_of_term_t t =
   match t with
@@ -22,6 +25,13 @@ let rec string_of_term_t t =
     Printf.sprintf "[%s: %s]%s" x (string_of_term_t m) (string_of_term_t n)
   | Star ->
     "*"
+
+let rec string_of_program p =
+  match p with
+  | Let (x, t, p') ->
+    Printf.sprintf "let %s = %s in \n%s"
+      x (string_of_term_t t) (string_of_program p')
+  | Term t -> string_of_term_t t
 
 let rec is_context (term : term_t) : bool = 
   match term with
@@ -109,14 +119,27 @@ let context_get (context : term_t) (x : id) : term_t =
 
 let rec subst_term (term : term_t) (n : term_t) (x : id) : term_t =
   match term with
-  | Id x' ->
-    if x = x' then n else term
+  | Star -> Star
+  | Id x' -> if x = x' then n else term
+  | App (m', n') -> App (subst_term m' n x, subst_term n' n x)
   | Lambda (x', m', n') ->
-    Lambda (x', subst_term m' n x, subst_term n' n x)
-  | App (m', n') -> 
-    App (subst_term m' n x, subst_term n' n x)
+    if x' <> x then
+      Lambda (x', subst_term m' n x, subst_term n' n x)
+    else
+      failwith "trying to substitute a bound variable"
   | Product (x', m', n') ->
     Product (x', subst_term m' n x, subst_term n' n x)
-  | Star ->
-    Star
 
+let rec alpha_equiv (t1 : term_t) (t2 : term_t) : bool =
+  match t1, t2 with
+  | Star, Star -> true
+  | Id x, Id y -> x = y
+  | App (m1, n1), App (m2, n2) -> (alpha_equiv m1 m2) && (alpha_equiv n1 n2)
+  | Lambda (_, m1, n1), Lambda (_, m2, n2) -> (alpha_equiv m1 m2) && (alpha_equiv n1 n2)
+  | Product (_, m1, n1), Product (_, m2, n2) -> (alpha_equiv m1 m2) && (alpha_equiv n1 n2)
+  | _ -> false
+
+let rec subst_binding (x : id) (t : term_t) (p : program) : program =
+  match p with
+  | Term t' -> Term (subst_term t' t x)
+  | Let (x', t', p') -> Let (x', (subst_term t' t x), (subst_binding x t p'))

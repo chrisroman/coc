@@ -32,6 +32,10 @@ rule read =
   | '='       { EQUALS }
   | "in"      { IN }
   | "untyped" { UNTYPED }
+  | "Theorem" { THEOREM }
+  | "with"    { WITH }
+  | "Proof"   { PROOF }
+  | ";"       { SEMICOLON }
   | eof       { EOF }
   | id as id  { ID id }
   | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }

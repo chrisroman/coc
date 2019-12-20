@@ -1,2 +1,4 @@
-[x: *][y: [x: *]*]*
+[x: *] [y: [x: *] *] *
+typecheck_single_term [x: *] [y: [x: *] *] *
 Type: *
+Value: [x: *] [y: [x: *] *] *

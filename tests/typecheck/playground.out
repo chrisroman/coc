@@ -1,2 +1,4 @@
-[fn: [a: *][x: a]a]*
+[fn: [a: *] [x: a] a] *
+typecheck_single_term [fn: [a: *] [x: a] a] *
 Type: *
+Value: [fn: [a: *] [x: a] a] *

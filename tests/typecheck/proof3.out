@@ -1,0 +1,70 @@
+let idT = [t: *] [x: t] t in 
+let id = (λt: *) (λx: t) x in 
+let False = [a: *] a in 
+let True = [a: *] [I: a] a in 
+let not = [A: *] [_: A] False in 
+let sum = (λA: *) (λB: *) [R: *] [f: [_: A] R] [g: [_: B] R] R in 
+let or_introl = (λA: *) (λB: *) (λx: A) (λR: *) (λf: [_: A] R) (λg: [_: B] R) (f x) in 
+let or_intror = (λA: *) (λB: *) (λy: B) (λR: *) (λf: [_: A] R) (λg: [_: B] R) (g y) in 
+let prod = (λA: *) (λB: *) [R: *] [_: [_: A] [_: B] R] R in 
+let conj = (λA: *) (λB: *) (λx: A) (λy: B) (λR: *) (λf: [_: A] [_: B] R) ((f x) y) in 
+Theorem proj1 = [A: *] [B: *] [_: ((prod A) B)] A with 
+	Proof (λA: *) (λB: *) (λp: ((prod A) B)) ((p A) (λx: A) (λy: B) x);
+Theorem proj2 = [A: *] [B: *] [_: ((prod A) B)] B with 
+	Proof (λA: *) (λB: *) (λp: ((prod A) B)) ((p B) (λx: A) (λy: B) y);
+let iff = (λX: *) (λY: *) ((prod [_: X] Y) [_: Y] X) in 
+Theorem a_implies_a = [A: *] [_: A] A with 
+	Proof id;
+Theorem iff_refl = [A: *] ((iff A) A) with 
+	Proof (λA: *) ((((conj [_: A] A) [_: A] A) (λx: A) x) (λx: A) x);
+let swap = (λA1: *) (λB1: *) (λp1: ((prod A1) B1)) ((((conj B1) A1) (((proj2 A1) B1) p1)) (((proj1 A1) B1) p1)) in 
+Theorem iff_sym = [A2: *] [B2: *] [_: ((iff A2) B2)] ((iff B2) A2) with 
+	Proof (λA2: *) (λB2: *) (λA_imp_B2: ((iff A2) B2)) (((swap [_: A2] B2) [_: B2] A2) A_imp_B2);
+*
+{idT} typecheck_single_term [t: *] [x: t] t
+Type: *
+{id} typecheck_single_term (λt: *) (λx: t) x
+Type: [t: *] [x: t] t
+{False} typecheck_single_term [a: *] a
+Type: *
+{True} typecheck_single_term [a: *] [I: a] a
+Type: *
+{not} typecheck_single_term [A: *] [_: A] [a: *] a
+Type: *
+{sum} typecheck_single_term (λA: *) (λB: *) [R: *] [f: [_: A] R] [g: [_: B] R] R
+Type: [A: *] [B: *] *
+{or_introl} typecheck_single_term (λA: *) (λB: *) (λx: A) (λR: *) (λf: [_: A] R) (λg: [_: B] R) (f x)
+Type: [A: *] [B: *] [x: A] [R: *] [f: [_: A] R] [g: [_: B] R] R
+{or_intror} typecheck_single_term (λA: *) (λB: *) (λy: B) (λR: *) (λf: [_: A] R) (λg: [_: B] R) (g y)
+Type: [A: *] [B: *] [y: B] [R: *] [f: [_: A] R] [g: [_: B] R] R
+{prod} typecheck_single_term (λA: *) (λB: *) [R: *] [_: [_: A] [_: B] R] R
+Type: [A: *] [B: *] *
+{conj} typecheck_single_term (λA: *) (λB: *) (λx: A) (λy: B) (λR: *) (λf: [_: A] [_: B] R) ((f x) y)
+Type: [A: *] [B: *] [x: A] [y: B] [R: *] [f: [_: A] [_: B] R] R
+typecheck_single_term [A: *] [B: *] [_: (((λA: *) (λB: *) [R: *] [_: [_: A] [_: B] R] R A) B)] A
+Type: *
+typecheck_single_term (λA: *) (λB: *) (λp: (((λA: *) (λB: *) [R: *] [_: [_: A] [_: B] R] R A) B)) ((p A) (λx: A) (λy: B) x)
+Type: [A: *] [B: *] [p: [R: *] [_: [_: A] [_: B] R] R] A
+typecheck_single_term [A: *] [B: *] [_: (((λA: *) (λB: *) [R: *] [_: [_: A] [_: B] R] R A) B)] B
+Type: *
+typecheck_single_term (λA: *) (λB: *) (λp: (((λA: *) (λB: *) [R: *] [_: [_: A] [_: B] R] R A) B)) ((p B) (λx: A) (λy: B) y)
+Type: [A: *] [B: *] [p: [R: *] [_: [_: A] [_: B] R] R] B
+{iff} typecheck_single_term (λX: *) (λY: *) (((λA: *) (λB: *) [R: *] [_: [_: A] [_: B] R] R [_: X] Y) [_: Y] X)
+Type: [X: *] [Y: *] *
+typecheck_single_term [A: *] [_: A] A
+Type: *
+typecheck_single_term (λt: *) (λx: t) x
+Type: [t: *] [x: t] t
+typecheck_single_term [A: *] (((λX: *) (λY: *) [R: *] [_: [_: [_: X] Y] [_: [_: Y] X] R] R A) A)
+Type: *
+typecheck_single_term (λA: *) (((((λA: *) (λB: *) (λx: A) (λy: B) (λR: *) (λf: [_: A] [_: B] R) ((f x) y) [_: A] A) [_: A] A) (λx: A) x) (λx: A) x)
+Type: [A: *] [R: *] [f: [_: [_: A] A] [_: [_: A] A] R] R
+{swap} typecheck_single_term (λA1: *) (λB1: *) (λp1: (((λA: *) (λB: *) [R: *] [_: [_: A] [_: B] R] R A1) B1)) (((((λA: *) (λB: *) (λx: A) (λy: B) (λR: *) (λf: [_: A] [_: B] R) ((f x) y) B1) A1) ((((λA: *) (λB: *) (λp: [R: *] [_: [_: A] [_: B] R] R) ((p B) (λx: A) (λy: B) y) A1) B1) p1)) ((((λA: *) (λB: *) (λp: [R: *] [_: [_: A] [_: B] R] R) ((p A) (λx: A) (λy: B) x) A1) B1) p1))
+Type: [A1: *] [B1: *] [p1: [R: *] [_: [_: A1] [_: B1] R] R] [R: *] [f: [_: B1] [_: A1] R] R
+typecheck_single_term [A2: *] [B2: *] [_: (((λX: *) (λY: *) [R: *] [_: [_: [_: X] Y] [_: [_: Y] X] R] R A2) B2)] (((λX: *) (λY: *) [R: *] [_: [_: [_: X] Y] [_: [_: Y] X] R] R B2) A2)
+Type: *
+typecheck_single_term (λA2: *) (λB2: *) (λA_imp_B2: (((λX: *) (λY: *) [R: *] [_: [_: [_: X] Y] [_: [_: Y] X] R] R A2) B2)) ((((λA1: *) (λB1: *) (λp1: [R: *] [_: [_: A1] [_: B1] R] R) ((λy: A1) (λR: *) (λf: [_: B1] [_: A1] R) ((f ((λp: [R: *] [_: [_: A1] [_: B1] R] R) ((p B1) (λx: A1) (λy: B1) y) p1)) y) ((p1 A1) (λx: A1) (λy: B1) x)) [_: A2] B2) [_: B2] A2) A_imp_B2)
+Type: [A2: *] [B2: *] [A_imp_B2: [R: *] [_: [_: [_: A2] B2] [_: [_: B2] A2] R] R] [R: *] [f: [_: [_: B2] A2] [_: [_: A2] B2] R] R
+typecheck_single_term *
+Type: *
+Value: *

@@ -1,0 +1,11 @@
+let idT = [t:*][x:t]t in
+let id = (\t:*)(\x:t)x in
+let bottom = [a:*]a in
+let not = [a: *][x: a] bottom in
+let bool = [r: *][_: r][_: r]r in
+let false = (\r: *)(\x: r)(\y: r)x in
+let true = (\r: *)(\x: r)(\y: r)y in
+let notb = (\b : bool) (((b bool) true) false) in
+let andb = (\b1: bool) (\b2: bool) (((b1 bool) b1) b2) in
+let orb  = (\b1: bool) (\b2: bool) (((b1 bool) b2) b1) in
+((andb true) false)

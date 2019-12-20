@@ -1,0 +1,36 @@
+let idT = [t:*][x:t]t in
+let id = (\t:*)(\x:t)x in
+let False = [a:*]a in
+let True = [a: *][I: a]a in
+let not = [A: *][_: A] False in
+let sum = (\A: *)(\B: *) [R: *][f: [_: A]R][g: [_: B]R]R in
+let or_introl = (\A: *)(\B: *)(\x: A)(\R: *)(\f: [_: A]R)(\g: [_: B]R)(f x) in
+let or_intror = (\A: *)(\B: *)(\y: B)(\R: *)(\f: [_: A]R)(\g: [_: B]R)(g y) in
+let prod = (\A: *)(\B: *) [R: *] [_: [_: A][_: B]R] R in
+let conj = (\A: *)(\B: *)(\x: A)(\y: B)(\R: *)(\f: [_: A][_: B]R)((f x) y) in
+
+Theorem proj1 = [A: *][B: *][_:  ((prod A) B)]A with
+    Proof (\A: *)(\B: *)(\p: ((prod A) B))((p A) (\x: A)(\y: B)x);
+
+Theorem proj2 = [A: *][B: *][_:  ((prod A) B)]B with
+    Proof (\A: *)(\B: *)(\p: ((prod A) B))((p B) (\x: A)(\y: B)y);
+
+let iff = (\X: *)(\Y: *) ((prod [_: X]Y) [_: Y]X) in
+
+Theorem a_implies_a = [A: *][_: A]A with
+    Proof id;
+
+Theorem iff_refl = [A: *]((iff A) A) with
+Proof (\A: *)((((conj [_: A]A) [_: A]A) (\x:A)x) (\x:A)x);
+
+let swap = (\A1:*)(\B1:*)(\p1: ((prod A1) B1))
+    ( ( ((conj B1) A1)
+        (((proj2 A1) B1) p1)
+      )
+      (((proj1 A1) B1) p1)
+    ) in
+
+Theorem iff_sym = [A2: *][B2: *][_: ((iff A2) B2)]((iff B2) A2) with
+Proof (\A2:*)(\B2:*)(\A_imp_B2: ((iff A2) B2))
+    (((swap [_: A2]B2) [_: B2]A2) A_imp_B2);
+*

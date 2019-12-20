@@ -1,0 +1,34 @@
+let idT = [t: *] [x: t] t in 
+let id = (λt: *) (λx: t) x in 
+let bottom = [a: *] a in 
+let not = [a: *] [x: a] bottom in 
+let bool = [r: *] [_: r] [_: r] r in 
+let false = (λr: *) (λx: r) (λy: r) x in 
+let true = (λr: *) (λx: r) (λy: r) y in 
+let notb = (λb: bool) (((b bool) true) false) in 
+let andb = (λb1: bool) (λb2: bool) (((b1 bool) b1) b2) in 
+let orb = (λb1: bool) (λb2: bool) (((b1 bool) b2) b1) in 
+((andb true) false)
+{idT} typecheck_single_term [t: *] [x: t] t
+Type: *
+{id} typecheck_single_term (λt: *) (λx: t) x
+Type: [t: *] [x: t] t
+{bottom} typecheck_single_term [a: *] a
+Type: *
+{not} typecheck_single_term [a: *] [x: a] [a: *] a
+Type: *
+{bool} typecheck_single_term [r: *] [_: r] [_: r] r
+Type: *
+{false} typecheck_single_term (λr: *) (λx: r) (λy: r) x
+Type: [r: *] [x: r] [y: r] r
+{true} typecheck_single_term (λr: *) (λx: r) (λy: r) y
+Type: [r: *] [x: r] [y: r] r
+{notb} typecheck_single_term (λb: [r: *] [_: r] [_: r] r) (((b [r: *] [_: r] [_: r] r) (λr: *) (λx: r) (λy: r) y) (λr: *) (λx: r) (λy: r) x)
+Type: [b: [r: *] [_: r] [_: r] r] [r: *] [_: r] [_: r] r
+{andb} typecheck_single_term (λb1: [r: *] [_: r] [_: r] r) (λb2: [r: *] [_: r] [_: r] r) (((b1 [r: *] [_: r] [_: r] r) b1) b2)
+Type: [b1: [r: *] [_: r] [_: r] r] [b2: [r: *] [_: r] [_: r] r] [r: *] [_: r] [_: r] r
+{orb} typecheck_single_term (λb1: [r: *] [_: r] [_: r] r) (λb2: [r: *] [_: r] [_: r] r) (((b1 [r: *] [_: r] [_: r] r) b2) b1)
+Type: [b1: [r: *] [_: r] [_: r] r] [b2: [r: *] [_: r] [_: r] r] [r: *] [_: r] [_: r] r
+typecheck_single_term (((λb1: [r: *] [_: r] [_: r] r) (λb2: [r: *] [_: r] [_: r] r) (((b1 [r: *] [_: r] [_: r] r) b1) b2) (λr: *) (λx: r) (λy: r) y) (λr: *) (λx: r) (λy: r) x)
+Type: [r: *] [_: r] [_: r] r
+Value: (λr: *) (λx: r) (λy: r) x

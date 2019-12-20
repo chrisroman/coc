@@ -1,0 +1,6 @@
+let nat = [C:*][_: C][_: [_: C]C]C in
+let one = (\C:*) (\z:C) (\f: [_: C]C) (f z) in
+let idT = [t: *][x: t]t in
+let id = (\t: *)(\x: t)x in
+let fn = (id idT) in
+(((one idT) id) fn)

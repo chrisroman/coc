@@ -1,0 +1,22 @@
+let nat = [C: *] [_: C] [_: [_: C] C] C in 
+let zero = (λC: *) (λz: C) (λf: [_: C] C) z in 
+let zero = (λC: *) (λz: C) (λf: [_: C] C) z in 
+let idT = [t: *] [x: t] t in 
+let id = (λt: *) (λx: t) x in 
+let fn = (id idT) in 
+(((zero idT) id) fn)
+{nat} typecheck_single_term [C: *] [_: C] [_: [_: C] C] C
+Type: *
+{zero} typecheck_single_term (λC: *) (λz: C) (λf: [_: C] C) z
+Type: [C: *] [z: C] [f: [_: C] C] C
+{zero} typecheck_single_term (λC: *) (λz: C) (λf: [_: C] C) z
+Type: [C: *] [z: C] [f: [_: C] C] C
+{idT} typecheck_single_term [t: *] [x: t] t
+Type: *
+{id} typecheck_single_term (λt: *) (λx: t) x
+Type: [t: *] [x: t] t
+{fn} typecheck_single_term ((λt: *) (λx: t) x [t: *] [x: t] t)
+Type: [x: [t: *] [x: t] t] [t: *] [x: t] t
+typecheck_single_term ((((λC: *) (λz: C) (λf: [_: C] C) z [t: *] [x: t] t) (λt: *) (λx: t) x) (λx: [t: *] [x: t] t) x)
+Type: [t: *] [x: t] t
+Value: (λt: *) (λx: t) x

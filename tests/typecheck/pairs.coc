@@ -1,8 +1,8 @@
-let untyped A_to_B_to_C = [_: A][_: B]C in
-let prod = (\A:*)(\B:*)[C:*][_ : A_to_B_to_C]C in
-let pair = (\A:*)(\B:*)(\x:A)(\y:B)(\C:*)(\f: A_to_B_to_C)((f x) y) in
+let prod = (\A:*)(\B:*)[C:*][_ : [_: A][_: B]C ]C in
+let pair = (\A:*)(\B:*)(\x:A)(\y:B)(\C:*)(\f: [_: A][_: B]C)((f x) y) in
 let id = (\t:*)(\x:t)x in
 let idT = [t:*][x:t]t in
 let my_pair = ((((pair idT) idT) id) id) in
-let fst = (\p: ((prod idT) idT)) p in
-fst
+let fst1 = (\p: [C: *] [f: [_: [t:*][x:t]t] [_: [t:*][x:t]t] C] C) ((p idT) (\x:idT)(\_:idT)x) in
+let fst2 = (\p: ((prod idT) idT)) ((p idT) (\x:idT)(\_:idT)x) in
+(fst1 my_pair)

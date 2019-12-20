@@ -1,0 +1,25 @@
+let prod = (λA: *) (λB: *) [C: *] [_: [_: A] [_: B] C] C in 
+let pair = (λA: *) (λB: *) (λx: A) (λy: B) (λC: *) (λf: [_: A] [_: B] C) ((f x) y) in 
+let id = (λt: *) (λx: t) x in 
+let idT = [t: *] [x: t] t in 
+let my_pair = ((((pair idT) idT) id) id) in 
+let fst1 = (λp: [C: *] [f: [_: [t: *] [x: t] t] [_: [t: *] [x: t] t] C] C) ((p idT) (λx: idT) (λ_: idT) x) in 
+let fst2 = (λp: ((prod idT) idT)) ((p idT) (λx: idT) (λ_: idT) x) in 
+(fst1 my_pair)
+{prod} typecheck_single_term (λA: *) (λB: *) [C: *] [_: [_: A] [_: B] C] C
+Type: [A: *] [B: *] *
+{pair} typecheck_single_term (λA: *) (λB: *) (λx: A) (λy: B) (λC: *) (λf: [_: A] [_: B] C) ((f x) y)
+Type: [A: *] [B: *] [x: A] [y: B] [C: *] [f: [_: A] [_: B] C] C
+{id} typecheck_single_term (λt: *) (λx: t) x
+Type: [t: *] [x: t] t
+{idT} typecheck_single_term [t: *] [x: t] t
+Type: *
+{my_pair} typecheck_single_term (((((λA: *) (λB: *) (λx: A) (λy: B) (λC: *) (λf: [_: A] [_: B] C) ((f x) y) [t: *] [x: t] t) [t: *] [x: t] t) (λt: *) (λx: t) x) (λt: *) (λx: t) x)
+Type: [C: *] [f: [_: [t: *] [x: t] t] [_: [t: *] [x: t] t] C] C
+{fst1} typecheck_single_term (λp: [C: *] [f: [_: [t: *] [x: t] t] [_: [t: *] [x: t] t] C] C) ((p [t: *] [x: t] t) (λx: [t: *] [x: t] t) (λ_: [t: *] [x: t] t) x)
+Type: [p: [C: *] [f: [_: [t: *] [x: t] t] [_: [t: *] [x: t] t] C] C] [t: *] [x: t] t
+{fst2} typecheck_single_term (λp: (((λA: *) (λB: *) [C: *] [_: [_: A] [_: B] C] C [t: *] [x: t] t) [t: *] [x: t] t)) ((p [t: *] [x: t] t) (λx: [t: *] [x: t] t) (λ_: [t: *] [x: t] t) x)
+Type: [p: [C: *] [_: [_: [t: *] [x: t] t] [_: [t: *] [x: t] t] C] C] [t: *] [x: t] t
+typecheck_single_term ((λp: [C: *] [f: [_: [t: *] [x: t] t] [_: [t: *] [x: t] t] C] C) ((p [t: *] [x: t] t) (λx: [t: *] [x: t] t) (λ_: [t: *] [x: t] t) x) (λC: *) (λf: [_: [t: *] [x: t] t] [_: [t: *] [x: t] t] C) ((f (λt: *) (λx: t) x) (λt: *) (λx: t) x))
+Type: [t: *] [x: t] t
+Value: (λt: *) (λx: t) x

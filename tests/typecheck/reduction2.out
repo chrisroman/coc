@@ -1,0 +1,4 @@
+((λd: [a: *] [b: a] a) d (λa: *) (λb: a) b)
+typecheck_single_term ((λd: [a: *] [b: a] a) d (λa: *) (λb: a) b)
+Type: [a: *] [b: a] a
+Value: (λa: *) (λb: a) b

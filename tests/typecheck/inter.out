@@ -1,4 +1,7 @@
-let A0 = [t: *][x: t]t in 
-(λa: [_1: [_2: A0]*]*)(λx: A0)[P: [_3: A0]*][_4: (a P)](P x)
+let A0 = [t: *] [x: t] t in 
+(λa: [_1: [_2: A0] *] *) (λx: A0) [P: [_3: A0] *] [_4: (a P)] (P x)
+{A0} typecheck_single_term [t: *] [x: t] t
 Type: *
-Type: [a: [_1: [_2: [t: *][x: t]t]*]*][x: [t: *][x: t]t]*
+typecheck_single_term (λa: [_1: [_2: [t: *] [x: t] t] *] *) (λx: [t: *] [x: t] t) [P: [_3: [t: *] [x: t] t] *] [_4: (a P)] (P x)
+Type: [a: [_1: [_2: [t: *] [x: t] t] *] *] [x: [t: *] [x: t] t] *
+Value: (λa: [_1: [_2: [t: *] [x: t] t] *] *) (λx: [t: *] [x: t] t) [P: [_3: [t: *] [x: t] t] *] [_4: (a P)] (P x)

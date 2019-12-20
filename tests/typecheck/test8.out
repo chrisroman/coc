@@ -1,2 +1,4 @@
-(λa: *)(λf: [_1: a]a)(λx: a)(f x)
-Type: [a: *][f: [_1: a]a][x: a]a
+(λa: *) (λf: [_1: a] a) (λx: a) (f x)
+typecheck_single_term (λa: *) (λf: [_1: a] a) (λx: a) (f x)
+Type: [a: *] [f: [_1: a] a] [x: a] a
+Value: (λa: *) (λf: [_1: a] a) (λx: a) (f x)

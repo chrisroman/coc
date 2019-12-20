@@ -1,0 +1,4 @@
+let idT = [a:*][b:a]a in
+let id = (\c:*)(\d:c)d in
+let fn = (\e: idT)e in
+(fn id)

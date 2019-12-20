@@ -1,0 +1,4 @@
+let idT = [a:*][x:a]a in
+Theorem id = idT with
+Proof (\a:*)(\x:a)x;
+id

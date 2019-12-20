@@ -1,0 +1,10 @@
+let idT = [a: *] [b: a] a in 
+let id1 = (λc: *) (λd: c) d in 
+((id1 idT) id1)
+{idT} typecheck_single_term [a: *] [b: a] a
+Type: *
+{id1} typecheck_single_term (λc: *) (λd: c) d
+Type: [c: *] [d: c] c
+typecheck_single_term (((λc: *) (λd: c) d [a: *] [b: a] a) (λc: *) (λd: c) d)
+Type: [a: *] [b: a] a
+Value: (λc: *) (λd: c) d

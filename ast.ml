@@ -15,6 +15,7 @@ type term_t =
 type program =
   | Let of (typed * id * term_t * program)
   | Term of term_t
+  | Theorem of (id * term_t * term_t * program)
 
 let rec string_of_term_t t =
   match t with
@@ -40,7 +41,10 @@ let rec string_of_program p =
     Printf.sprintf "let%s %s = %s in \n%s"
       (string_of_typed tc) x (string_of_term_t t) (string_of_program p')
   | Term t -> string_of_term_t t
-
+  | Theorem (x, theorem, proof, prog) ->
+    Printf.sprintf "Theorem %s = %s with \n\tProof %s;\n%s"
+      x (string_of_term_t theorem) (string_of_term_t proof) (string_of_program prog)
+ 
 let rec is_context (term : term_t) : bool = 
   match term with
   | Star -> true
@@ -125,6 +129,7 @@ let context_get (context : term_t) (x : id) : term_t =
   assert_context context;
   context_get_impl context x None
 
+(* Return [n/x]term *)
 let rec subst_term (term : term_t) (n : term_t) (x : id) : term_t =
   match term with
   | Star -> Star
@@ -138,16 +143,26 @@ let rec subst_term (term : term_t) (n : term_t) (x : id) : term_t =
   | Product (x', m', n') ->
     Product (x', subst_term m' n x, subst_term n' n x)
 
-let rec alpha_equiv (t1 : term_t) (t2 : term_t) : bool =
+let rec alpha_equiv ?(map = []) (t1 : term_t) (t2 : term_t) : bool =
   match t1, t2 with
   | Star, Star -> true
-  | Id x, Id y -> x = y
-  | App (m1, n1), App (m2, n2) -> (alpha_equiv m1 m2) && (alpha_equiv n1 n2)
-  | Lambda (_, m1, n1), Lambda (_, m2, n2) -> (alpha_equiv m1 m2) && (alpha_equiv n1 n2)
-  | Product (_, m1, n1), Product (_, m2, n2) -> (alpha_equiv m1 m2) && (alpha_equiv n1 n2)
+  | Id x, Id y ->
+    (* TODO: Not sure if the things aren't mapped, then they should be equal *)
+    begin match List.Assoc.find map x ~equal:(=) with
+      | None -> x = y
+      | Some x' -> x' = y
+    end
+  | App (m1, n1), App (m2, n2) ->
+    (alpha_equiv ~map m1 m2) && (alpha_equiv ~map n1 n2)
+  | Lambda (x1, m1, n1), Lambda (x2, m2, n2)
+  | Product (x1, m1, n1), Product (x2, m2, n2) ->
+    let new_map = List.Assoc.add map x1 x2 ~equal:(=) in
+    (alpha_equiv ~map:(new_map) m1 m2) && (alpha_equiv ~map:(new_map) n1 n2)
   | _ -> false
 
 let rec subst_binding (x : id) (t : term_t) (p : program) : program =
   match p with
   | Term t' -> Term (subst_term t' t x)
   | Let (tc, x', t', p') -> Let (tc, x', (subst_term t' t x), (subst_binding x t p'))
+  | Theorem (x', theorem, proof, prog) ->
+    Theorem (x', (subst_term theorem t x), (subst_term proof t x), (subst_binding x t prog))

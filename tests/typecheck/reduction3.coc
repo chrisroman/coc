@@ -1,0 +1,3 @@
+let idT = [a:*][b:a]a in
+let id1 = (\c:*)(\d:c)d in
+((id1 idT) id1)

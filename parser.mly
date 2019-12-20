@@ -23,6 +23,10 @@
 %token EQUALS
 %token IN
 %token UNTYPED
+%token THEOREM
+%token WITH
+%token PROOF
+%token SEMICOLON
 %token EOF
 
 %start <Ast.program option> start
@@ -40,6 +44,8 @@ program:
     { Let (Untyped, x, t1, p) }
   | LET; x = ID; EQUALS; t1 = term; IN; p = program
     { Let (Typed, x, t1, p) }
+  | THEOREM; x = ID; EQUALS; t = term; WITH; PROOF; proof = term; SEMICOLON; p = program
+    { Theorem (x, t, proof, p) }
   | term = term
   { Term term }
 ;

@@ -1,0 +1,13 @@
+let idT = [a: *] [x: a] a in 
+Theorem id = idT with 
+	Proof (λa: *) (λx: a) x;
+id
+{idT} typecheck_single_term [a: *] [x: a] a
+Type: *
+typecheck_single_term [a: *] [x: a] a
+Type: *
+typecheck_single_term (λa: *) (λx: a) x
+Type: [a: *] [x: a] a
+typecheck_single_term (λa: *) (λx: a) x
+Type: [a: *] [x: a] a
+Value: (λa: *) (λx: a) x

@@ -1,0 +1,28 @@
+let star_t = [t: *] t in 
+let A0 = [t: *] [_: t] t in 
+let a0 = (λf: [_: A0] *) star_t in 
+let P0 = (λ_: A0) star_t in 
+let p0 = star_t in 
+let x = (λt: *) (λarg: t) arg in 
+let inter = (λa: [_1: [_2: A0] *] *) (λx2: A0) [P: [_3: A0] *] [_4: (a P)] (P x2) in 
+let h_gen = (λthing: ((inter a0) x)) thing in 
+h_gen
+{star_t} typecheck_single_term [t: *] t
+Type: *
+{A0} typecheck_single_term [t: *] [_: t] t
+Type: *
+{a0} typecheck_single_term (λf: [_: [t: *] [_: t] t] *) [t: *] t
+Type: [f: [_: [t: *] [_: t] t] *] *
+{P0} typecheck_single_term (λ_: [t: *] [_: t] t) [t: *] t
+Type: [_: [t: *] [_: t] t] *
+{p0} typecheck_single_term [t: *] t
+Type: *
+{x} typecheck_single_term (λt: *) (λarg: t) arg
+Type: [t: *] [arg: t] t
+{inter} typecheck_single_term (λa: [_1: [_2: [t: *] [_: t] t] *] *) (λx2: [t: *] [_: t] t) [P: [_3: [t: *] [_: t] t] *] [_4: (a P)] (P x2)
+Type: [a: [_1: [_2: [t: *] [_: t] t] *] *] [x2: [t: *] [_: t] t] *
+{h_gen} typecheck_single_term (λthing: (((λa: [_1: [_2: [t: *] [_: t] t] *] *) (λx2: [t: *] [_: t] t) [P: [_3: [t: *] [_: t] t] *] [_4: (a P)] (P x2) (λf: [_: [t: *] [_: t] t] *) [t: *] t) (λt: *) (λarg: t) arg)) thing
+Type: [thing: [P: [_3: [t: *] [_: t] t] *] [_4: [t: *] t] (P (λt: *) (λarg: t) arg)] [P: [_3: [t: *] [_: t] t] *] [_4: [t: *] t] (P (λt: *) (λarg: t) arg)
+typecheck_single_term (λthing: [P: [_3: [t: *] [_: t] t] *] [_4: [t: *] t] (P (λt: *) (λarg: t) arg)) thing
+Type: [thing: [P: [_3: [t: *] [_: t] t] *] [_4: [t: *] t] (P (λt: *) (λarg: t) arg)] [P: [_3: [t: *] [_: t] t] *] [_4: [t: *] t] (P (λt: *) (λarg: t) arg)
+Value: (λthing: [P: [_3: [t: *] [_: t] t] *] [_4: [t: *] t] (P (λt: *) (λarg: t) arg)) thing

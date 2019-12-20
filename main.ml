@@ -23,7 +23,7 @@ let rec parse_and_print lexbuf typecheck =
   | Some prog ->
     printf "%s\n" (Ast.string_of_program prog);
     if typecheck then (
-      Typecheck.typecheck_program prog
+      Typecheck.typecheck_program prog |> ignore
     );
     (* printf "%s\n" "Found a value!"; *)
     parse_and_print lexbuf typecheck
